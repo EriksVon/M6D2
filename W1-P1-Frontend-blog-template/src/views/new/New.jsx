@@ -5,13 +5,14 @@ import "react-quill/dist/quill.snow.css";
 import "./styles.css";
 
 const NewBlogPost = (props) => {
-  const [newPost, setNewPost] = useState({
+  const initialState = {
     category: "",
     title: "",
     cover: "",
-    readTime: "",
+    /* readTime: "", */
     content: "",
-  });
+  };
+  const [newPost, setNewPost] = useState(initialState);
 
   const handleChange = useCallback((value, name) => {
     setNewPost((prevPost) => ({
@@ -19,18 +20,9 @@ const NewBlogPost = (props) => {
       [name]: value,
     }));
   });
-
-  const emptyPost = () => ({
-    category: "",
-    title: "",
-    cover: "",
-    readTime: "",
-    content: "",
-  });
-
   const submitPost = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:3001/blogPosts/`, {
+    fetch(`http://localhost:3001/api/blogPosts/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,6 +32,7 @@ const NewBlogPost = (props) => {
       .then((response) => {
         if (response.ok) {
           alert("post creato con successo");
+          setNewPost(initialState);
         } else {
           throw new Error("Bad request");
         }
@@ -48,8 +41,6 @@ const NewBlogPost = (props) => {
         alert("Oops... something went wrong, try again!");
         console.error(error);
       });
-    /*       .finally(() => {
-      }); */
   };
 
   return (
@@ -72,11 +63,8 @@ const NewBlogPost = (props) => {
             value={newPost.category}
             onChange={(e) => handleChange(e.target.value, "category")}
           >
-            <option>Categoria 1</option>
-            <option>Categoria 2</option>
-            <option>Categoria 3</option>
-            <option>Categoria 4</option>
-            <option>Categoria 5</option>
+            <option>Tecnology</option>
+            <option>Science</option>
           </Form.Control>
         </Form.Group>
         <Form.Group controlId="blog-form" className="mt-3">
@@ -116,7 +104,9 @@ const NewBlogPost = (props) => {
             type="reset"
             size="lg"
             variant="outline-dark"
-            onClick={emptyPost}
+            onClick={() => {
+              setNewPost(initialState);
+            }}
           >
             Reset
           </Button>
